@@ -11,6 +11,9 @@ namespace PaySmartly.Archive
 
             facade.RegisterGetPaySlipMethod();
             facade.RegisterDeletePaySlipMethod();
+            facade.RegisterGetAllPaySlipsForEmployeeMethod();
+            facade.RegisterGetAllPaySlipsForSuperRateMethod();
+            facade.RegisterGetAllPaySlipsForAnnualSalaryEndpointMethod();
 
             facade.Run();
         }

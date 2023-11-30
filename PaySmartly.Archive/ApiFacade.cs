@@ -4,6 +4,8 @@ using PaySmartly.Archive.HATEOAS;
 
 using static PaySmartly.Archive.Helpers.PaySlipConverter;
 using static PaySmartly.Archive.Endpoints.PaySlipEndpoints;
+using PaySmartly.Archive.Persistance;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PaySmartly.Archive
 {
@@ -17,13 +19,15 @@ namespace PaySmartly.Archive
     {
         private readonly WebApplication app = app;
 
+        public void Run() => app.Run();
+
         public void RegisterGetPaySlipMethod()
         {
-            app.MapGet(GetEndpoint.Pattern, async (string id, IManager manager, HttpContext context, LinkGenerator linkGenerator) =>
+            app.MapGet(GetEndpoint.Pattern, async (string id, IPersistance persistance, HttpContext context, LinkGenerator linkGenerator) =>
             {
-                PaySlipRecord? paySlip = await manager.GetPaySlip(id);
+                PaySlipRecord? record = await persistance.Get(id);
 
-                if (paySlip is null)
+                if (record is null)
                 {
                     return Results.NotFound();
                 }
@@ -31,11 +35,11 @@ namespace PaySmartly.Archive
                 {
                     IEnumerable<Link> links =
                     [
-                        new (linkGenerator.GetUriByName(context, GetEndpoint.Name, values: new{paySlip.Id}),"self", GetEndpoint.Method),
-                        new (linkGenerator.GetUriByName(context, DeleteEndpoint.Name, values: new{paySlip.Id}), DeleteEndpoint.Name, DeleteEndpoint.Method)
+                        new (linkGenerator.GetPathByName(context, GetEndpoint.Name, values: new{record.Id}), "self", GetEndpoint.Method),
+                        new (linkGenerator.GetPathByName(context, DeleteEndpoint.Name, values: new{record.Id}), DeleteEndpoint.Name, DeleteEndpoint.Method)
                     ];
 
-                    PaySlipResponse response = Convert(paySlip, links);
+                    PaySlipResponse response = Convert(record, links);
 
                     return Results.Ok(response); ;
                 }
@@ -49,19 +53,13 @@ namespace PaySmartly.Archive
 
         public void RegisterDeletePaySlipMethod()
         {
-            app.MapDelete(DeleteEndpoint.Pattern, async (string id, IManager manager) =>
+            app.MapDelete(DeleteEndpoint.Pattern, async (string id, IPersistance persistance) =>
             {
-                PaySlipRecord? paySlip = await manager.DeletePaySlip(id);
+                bool deleted = await persistance.Delete(id);
 
-                if (paySlip is null)
-                {
-                    return Results.NotFound();
-                }
-                else
-                {
-                    PaySlipResponse response = Convert(paySlip, new List<Link>());
-                    return Results.Ok(response);
-                }
+                return !deleted
+                    ? Results.NotFound()
+                    : Results.NoContent();
 
             })
             .WithName(DeleteEndpoint.Name)
@@ -69,9 +67,72 @@ namespace PaySmartly.Archive
             .AddEndpointFilter<DeletePaySlipValidator>();
         }
 
-        public void Run()
+        public void RegisterGetAllPaySlipsForEmployeeMethod()
         {
-            app.Run();
+            app.MapGet(GetAllPaySlipsForEmployeeEndpoint.Pattern, async (
+                string firstName,
+                string lastName,
+                int limit,
+                int offset,
+                IPersistance persistance,
+                HttpContext context,
+                LinkGenerator linkGenerator) =>
+            {
+                IEnumerable<PaySlipRecord> records = await persistance.GetAllForEmployee(firstName, lastName, limit, offset);
+
+                List<PaySlipResponse> responses = [];
+                foreach (var record in records)
+                {
+                    IEnumerable<Link> links =
+                    [
+                        new (linkGenerator.GetPathByName(context, GetEndpoint.Name, values: new{record.Id}), GetEndpoint.Name, GetEndpoint.Method),
+                        new (linkGenerator.GetPathByName(context, DeleteEndpoint.Name, values: new{record.Id}), DeleteEndpoint.Name, DeleteEndpoint.Method)
+                    ];
+
+                    PaySlipResponse response = Convert(record, links);
+                    responses.Add(response);
+                }
+
+                return Results.Ok(responses);
+            })
+            .WithName(GetAllPaySlipsForEmployeeEndpoint.Name)
+            .WithOpenApi();
+            // .AddEndpointFilter<DeletePaySlipValidator>(); // TODO:
+        }
+
+        public void RegisterGetAllPaySlipsForSuperRateMethod()
+        {
+            app.MapGet(GetAllPaySlipsForSuperRateEndpoint.Pattern, async (
+                int from,
+                int to,
+                int limit,
+                int offset,
+                IPersistance persistance,
+                HttpContext context,
+                LinkGenerator linkGenerator) =>
+            {
+                throw new NotImplementedException();
+            })
+            .WithName(GetAllPaySlipsForSuperRateEndpoint.Name)
+            .WithOpenApi();
+            // .AddEndpointFilter<DeletePaySlipValidator>(); // TODO:
+        }
+        public void RegisterGetAllPaySlipsForAnnualSalaryEndpointMethod()
+        {
+            app.MapGet(GetAllPaySlipsForAnnualSalaryEndpoint.Pattern, async (
+                int from,
+                int to,
+                int limit,
+                int offset,
+                IPersistance persistance,
+                HttpContext context,
+                LinkGenerator linkGenerator) =>
+            {
+                throw new NotImplementedException();
+            })
+            .WithName(GetAllPaySlipsForAnnualSalaryEndpoint.Name)
+            .WithOpenApi();
+            // .AddEndpointFilter<DeletePaySlipValidator>(); // TODO:
         }
     }
 }

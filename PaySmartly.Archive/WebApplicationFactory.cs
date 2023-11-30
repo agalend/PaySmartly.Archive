@@ -42,7 +42,6 @@ namespace PaySmartly.Archive
 
 
             builder.Services.AddScoped<IPersistance, Persistance.Persistance>();
-            builder.Services.AddScoped<IManager, Manager>();
         }
 
         private static void AddOpenTelemetryLogging(WebApplicationBuilder builder)
