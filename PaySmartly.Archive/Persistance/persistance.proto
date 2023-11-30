@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+option csharp_namespace = "PaySmartly.Persistance";
+
+package persistance;
+
+import "google/protobuf/timestamp.proto";
+
+service Persistance {
+  rpc Create (CreateRequest) returns (Response);
+  rpc Get (GetRequest) returns (Response);
+  rpc Delete (DeleteRequest) returns (Response);
+}
+message CreateRequest {
+  Record record = 1;
+}
+
+message GetRequest {
+  string id = 1;
+}
+
+message DeleteRequest {
+  string id = 1;
+}
+
+message Response {
+  Record record = 1;
+  bool Exists = 2;
+}
+
+message Record {
+  string id = 1;
+  string employeeFirstName = 2;
+  string employeeLastName = 3;
+  double annualSalary = 4;
+  double superRate = 5;
+  google.protobuf.Timestamp payPeriodFrom = 6;
+  google.protobuf.Timestamp payPeriodTo = 7;
+  int32 roundTo = 8;
+  int32 months = 9;
+  double grossIncome = 10;
+  double incomeTax = 11;
+  double netIncome = 12;
+  double super = 13;
+  string requesterFirstName = 14;
+  string requesterLastName = 15;
+  google.protobuf.Timestamp createdAt = 16;
+}

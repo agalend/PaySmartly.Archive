@@ -1,6 +1,6 @@
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+using PaySmartly.Archive;
 
-app.MapGet("/", () => "Hello World!");
+App app = new();
+app.Run(args);
 
-app.Run();
+public partial class Program { }
