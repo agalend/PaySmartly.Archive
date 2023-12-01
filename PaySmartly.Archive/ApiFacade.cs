@@ -26,7 +26,7 @@ namespace PaySmartly.Archive
             {
                 return Results.Ok();
             })
-            .WithName(HealthEndpoint.Name)
+            .WithName(HealthEndpoint.Name);
         }
 
         public void RegisterGetPaySlipMethod()
