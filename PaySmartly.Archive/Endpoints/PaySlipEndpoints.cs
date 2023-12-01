@@ -2,6 +2,7 @@ namespace PaySmartly.Archive.Endpoints
 {
     public static class PaySlipEndpoints
     {
+        public static PaySlipEndpoint HealthEndpoint = new("health", "health", "GET");
         public static PaySlipEndpoint GetEndpoint = new("archive/pay-slips/{id}", "get-pay-slip-by-id", "GET");
         public static PaySlipEndpoint DeleteEndpoint = new("archive/pay-slips/{id}", "delete-pay-slip-by-id", "DELETE");
 

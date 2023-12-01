@@ -20,6 +20,15 @@ namespace PaySmartly.Archive
 
         public void Run() => app.Run();
 
+        public void RegisterHealthMethod()
+        {
+            app.MapGet(HealthEndpoint.Pattern, () =>
+            {
+                return Results.Ok();
+            })
+            .WithName(HealthEndpoint.Name)
+        }
+
         public void RegisterGetPaySlipMethod()
         {
             app.MapGet(GetEndpoint.Pattern, async (string id, IPersistance persistance, HttpContext context, LinkGenerator linkGenerator) =>

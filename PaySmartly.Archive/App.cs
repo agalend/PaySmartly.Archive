@@ -9,6 +9,7 @@ namespace PaySmartly.Archive
             WebApplication app = CreateWebApplication(args);
             ApiFacade facade = new(app);
 
+            facade.RegisterHealthMethod();
             facade.RegisterGetPaySlipMethod();
             facade.RegisterDeletePaySlipMethod();
             facade.RegisterGetAllPaySlipsForEmployeeMethod();
