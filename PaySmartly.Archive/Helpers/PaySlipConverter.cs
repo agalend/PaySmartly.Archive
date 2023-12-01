@@ -14,12 +14,14 @@ namespace PaySmartly.Archive.Helpers
                 record.Employee,
                 record.AnnualSalary,
                 record.SuperRate,
-                record.PayPeriod,
+                record.PayPeriodFrom,
+                record.PayPeriodTo,
                 record.GrossIncome,
                 record.IncomeTax,
                 record.NetIncome,
                 record.Super,
                 record.Requester,
+                record.CreatedAt,
                 links);
         }
 
@@ -29,6 +31,7 @@ namespace PaySmartly.Archive.Helpers
                 new EmployeeIdentity(record.EmployeeFirstName, record.EmployeeLastName),
                 record.AnnualSalary,
                 record.SuperRate,
+                record.PayPeriodFrom.ToDateTime(),
                 record.PayPeriodTo.ToDateTime(),
                 record.RoundTo,
                 record.Months,
@@ -40,36 +43,12 @@ namespace PaySmartly.Archive.Helpers
                 record.GrossIncome,
                 record.IncomeTax,
                 record.NetIncome,
-                record.Super
+                record.Super,
+                record.CreatedAt.ToDateTime()
             );
 
             PaySlipRecord paySlipRecord = new(record.Id, paySlip);
             return paySlipRecord;
-        }
-
-        public static CreateRequest Convert(PaySlip paySlip, DateTime createdAt)
-        {
-            return new CreateRequest
-            {
-                Record = new()
-                {
-                    EmployeeFirstName = paySlip.Employee.FirstName,
-                    EmployeeLastName = paySlip.Employee.LastName,
-                    AnnualSalary = paySlip.AnnualSalary,
-                    SuperRate = paySlip.SuperRate,
-                    PayPeriodFrom = paySlip.PayPeriod.ToTimestamp(),
-                    PayPeriodTo = paySlip.PayPeriod.ToTimestamp(),
-                    RoundTo = paySlip.RoundTo,
-                    Months = paySlip.Months,
-                    GrossIncome = paySlip.GrossIncome,
-                    IncomeTax = paySlip.IncomeTax,
-                    NetIncome = paySlip.NetIncome,
-                    Super = paySlip.Super,
-                    RequesterFirstName = paySlip.Requester.FirstName,
-                    RequesterLastName = paySlip.Requester.LastName,
-                    CreatedAt = Timestamp.FromDateTime(createdAt)
-                }
-            };
         }
     }
 }

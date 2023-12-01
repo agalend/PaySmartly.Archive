@@ -5,7 +5,6 @@ using PaySmartly.Archive.HATEOAS;
 using static PaySmartly.Archive.Helpers.PaySlipConverter;
 using static PaySmartly.Archive.Endpoints.PaySlipEndpoints;
 using PaySmartly.Archive.Persistance;
-using Microsoft.AspNetCore.Mvc;
 
 namespace PaySmartly.Archive
 {
@@ -80,18 +79,7 @@ namespace PaySmartly.Archive
             {
                 IEnumerable<PaySlipRecord> records = await persistance.GetAllForEmployee(firstName, lastName, limit, offset);
 
-                List<PaySlipResponse> responses = [];
-                foreach (var record in records)
-                {
-                    IEnumerable<Link> links =
-                    [
-                        new (linkGenerator.GetPathByName(context, GetEndpoint.Name, values: new{record.Id}), GetEndpoint.Name, GetEndpoint.Method),
-                        new (linkGenerator.GetPathByName(context, DeleteEndpoint.Name, values: new{record.Id}), DeleteEndpoint.Name, DeleteEndpoint.Method)
-                    ];
-
-                    PaySlipResponse response = Convert(record, links);
-                    responses.Add(response);
-                }
+                IEnumerable<PaySlipResponse> responses = GerResponses(records, context, linkGenerator);
 
                 return Results.Ok(responses);
             })
@@ -111,7 +99,11 @@ namespace PaySmartly.Archive
                 HttpContext context,
                 LinkGenerator linkGenerator) =>
             {
-                throw new NotImplementedException();
+                IEnumerable<PaySlipRecord> records = await persistance.GetAllForSuperRate(from, to, limit, offset);
+
+                IEnumerable<PaySlipResponse> responses = GerResponses(records, context, linkGenerator);
+
+                return Results.Ok(responses);
             })
             .WithName(GetAllPaySlipsForSuperRateEndpoint.Name)
             .WithOpenApi();
@@ -128,11 +120,37 @@ namespace PaySmartly.Archive
                 HttpContext context,
                 LinkGenerator linkGenerator) =>
             {
-                throw new NotImplementedException();
+                IEnumerable<PaySlipRecord> records = await persistance.GetAllForAnnualSalary(from, to, limit, offset);
+
+                IEnumerable<PaySlipResponse> responses = GerResponses(records, context, linkGenerator);
+
+                return Results.Ok(responses);
             })
             .WithName(GetAllPaySlipsForAnnualSalaryEndpoint.Name)
             .WithOpenApi();
             // .AddEndpointFilter<DeletePaySlipValidator>(); // TODO:
+        }
+
+        private IEnumerable<PaySlipResponse> GerResponses(
+            IEnumerable<PaySlipRecord> records,
+            HttpContext context,
+            LinkGenerator linkGenerator)
+        {
+            List<PaySlipResponse> responses = [];
+
+            foreach (var record in records)
+            {
+                IEnumerable<Link> links =
+                [
+                    new (linkGenerator.GetPathByName(context, GetEndpoint.Name, values: new{record.Id}), GetEndpoint.Name, GetEndpoint.Method),
+                    new (linkGenerator.GetPathByName(context, DeleteEndpoint.Name, values: new{record.Id}), DeleteEndpoint.Name, DeleteEndpoint.Method)
+                ];
+
+                PaySlipResponse response = Convert(record, links);
+                responses.Add(response);
+            }
+
+            return responses;
         }
     }
 }
