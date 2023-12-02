@@ -37,7 +37,7 @@ namespace PaySmartly.Archive
             builder.Services.AddGrpcClient<PersistanceClient>(options =>
             {
                 // TODO: get from config
-                options.Address = new Uri("http://localhost:8000");
+                options.Address = new Uri("http://localhost:9087");
             });
 
 
