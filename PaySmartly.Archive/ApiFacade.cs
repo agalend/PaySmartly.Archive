@@ -5,6 +5,7 @@ using PaySmartly.Archive.HATEOAS;
 using static PaySmartly.Archive.Helpers.PaySlipConverter;
 using static PaySmartly.Archive.Endpoints.PaySlipEndpoints;
 using PaySmartly.Archive.Persistance;
+using System.Net;
 
 namespace PaySmartly.Archive
 {
@@ -26,7 +27,8 @@ namespace PaySmartly.Archive
             {
                 return Results.Ok();
             })
-            .WithName(HealthEndpoint.Name);
+            .WithName(HealthEndpoint.Name)
+            .WithOpenApi();
         }
 
         public void RegisterGetMethod()
@@ -54,6 +56,7 @@ namespace PaySmartly.Archive
             })
             .WithName(GetEndpoint.Name)
             .WithOpenApi()
+            .Produces<PaySlipResponse>((int)HttpStatusCode.OK)
             .AddEndpointFilter<GetPaySlipValidator>();
         }
 
@@ -72,6 +75,7 @@ namespace PaySmartly.Archive
             })
             .WithName(DeleteEndpoint.Name)
             .WithOpenApi()
+            .Produces((int)HttpStatusCode.NoContent)
             .AddEndpointFilter<DeletePaySlipValidator>();
         }
 
@@ -94,6 +98,7 @@ namespace PaySmartly.Archive
             })
             .WithName(GetAllForEmployeeEndpoint.Name)
             .WithOpenApi()
+            .Produces<IEnumerable<PaySlipResponse>>((int)HttpStatusCode.OK)
             .AddEndpointFilter<GetAllForEmployeeValidator>();
         }
 
@@ -116,6 +121,7 @@ namespace PaySmartly.Archive
             })
             .WithName(GetAllForSuperRateEndpoint.Name)
             .WithOpenApi()
+            .Produces<IEnumerable<PaySlipResponse>>((int)HttpStatusCode.OK)
             .AddEndpointFilter<GetAllForSuperRateValidator>();
         }
         public void RegisterGetAllForAnnualSalaryEndpointMethod()
@@ -137,6 +143,7 @@ namespace PaySmartly.Archive
             })
             .WithName(GetAllForAnnualSalaryEndpoint.Name)
             .WithOpenApi()
+            .Produces<IEnumerable<PaySlipResponse>>((int)HttpStatusCode.OK)
             .AddEndpointFilter<GetAllForAnnualSalaryValidator>();
         }
 
