@@ -29,7 +29,7 @@ namespace PaySmartly.Archive
             .WithName(HealthEndpoint.Name);
         }
 
-        public void RegisterGetPaySlipMethod()
+        public void RegisterGetMethod()
         {
             app.MapGet(GetEndpoint.Pattern, async (string id, IPersistance persistance, HttpContext context, LinkGenerator linkGenerator) =>
             {
@@ -59,7 +59,7 @@ namespace PaySmartly.Archive
 
         // There is no UpdatePaySlipMethod intentionally 
 
-        public void RegisterDeletePaySlipMethod()
+        public void RegisterDeleteMethod()
         {
             app.MapDelete(DeleteEndpoint.Pattern, async (string id, IPersistance persistance) =>
             {
@@ -75,9 +75,9 @@ namespace PaySmartly.Archive
             .AddEndpointFilter<DeletePaySlipValidator>();
         }
 
-        public void RegisterGetAllPaySlipsForEmployeeMethod()
+        public void RegisterGetAllForEmployeeMethod()
         {
-            app.MapGet(GetAllPaySlipsForEmployeeEndpoint.Pattern, async (
+            app.MapGet(GetAllForEmployeeEndpoint.Pattern, async (
                 string firstName,
                 string lastName,
                 int limit,
@@ -92,14 +92,14 @@ namespace PaySmartly.Archive
 
                 return Results.Ok(responses);
             })
-            .WithName(GetAllPaySlipsForEmployeeEndpoint.Name)
-            .WithOpenApi();
-            // .AddEndpointFilter<DeletePaySlipValidator>(); // TODO:
+            .WithName(GetAllForEmployeeEndpoint.Name)
+            .WithOpenApi()
+            .AddEndpointFilter<GetAllForEmployeeValidator>();
         }
 
-        public void RegisterGetAllPaySlipsForSuperRateMethod()
+        public void RegisterGetAllForSuperRateMethod()
         {
-            app.MapGet(GetAllPaySlipsForSuperRateEndpoint.Pattern, async (
+            app.MapGet(GetAllForSuperRateEndpoint.Pattern, async (
                 int from,
                 int to,
                 int limit,
@@ -114,13 +114,13 @@ namespace PaySmartly.Archive
 
                 return Results.Ok(responses);
             })
-            .WithName(GetAllPaySlipsForSuperRateEndpoint.Name)
-            .WithOpenApi();
-            // .AddEndpointFilter<DeletePaySlipValidator>(); // TODO:
+            .WithName(GetAllForSuperRateEndpoint.Name)
+            .WithOpenApi()
+            .AddEndpointFilter<GetAllForSuperRateValidator>();
         }
-        public void RegisterGetAllPaySlipsForAnnualSalaryEndpointMethod()
+        public void RegisterGetAllForAnnualSalaryEndpointMethod()
         {
-            app.MapGet(GetAllPaySlipsForAnnualSalaryEndpoint.Pattern, async (
+            app.MapGet(GetAllForAnnualSalaryEndpoint.Pattern, async (
                 int from,
                 int to,
                 int limit,
@@ -135,9 +135,9 @@ namespace PaySmartly.Archive
 
                 return Results.Ok(responses);
             })
-            .WithName(GetAllPaySlipsForAnnualSalaryEndpoint.Name)
-            .WithOpenApi();
-            // .AddEndpointFilter<DeletePaySlipValidator>(); // TODO:
+            .WithName(GetAllForAnnualSalaryEndpoint.Name)
+            .WithOpenApi()
+            .AddEndpointFilter<GetAllForAnnualSalaryValidator>();
         }
 
         private IEnumerable<PaySlipResponse> GerResponses(

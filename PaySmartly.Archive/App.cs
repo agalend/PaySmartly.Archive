@@ -10,11 +10,11 @@ namespace PaySmartly.Archive
             ApiFacade facade = new(app);
 
             facade.RegisterHealthMethod();
-            facade.RegisterGetPaySlipMethod();
-            facade.RegisterDeletePaySlipMethod();
-            facade.RegisterGetAllPaySlipsForEmployeeMethod();
-            facade.RegisterGetAllPaySlipsForSuperRateMethod();
-            facade.RegisterGetAllPaySlipsForAnnualSalaryEndpointMethod();
+            facade.RegisterGetMethod();
+            facade.RegisterDeleteMethod();
+            facade.RegisterGetAllForEmployeeMethod();
+            facade.RegisterGetAllForSuperRateMethod();
+            facade.RegisterGetAllForAnnualSalaryEndpointMethod();
 
             facade.Run();
         }
