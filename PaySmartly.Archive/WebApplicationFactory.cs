@@ -3,6 +3,7 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using PaySmartly.Archive.Env;
 using PaySmartly.Archive.Exceptions;
 using PaySmartly.Archive.Persistance;
 using static PaySmartly.Persistance.Persistance;
@@ -11,7 +12,6 @@ namespace PaySmartly.Archive
 {
     public static class WebApplicationFactory
     {
-        // TODO: set service name somewhere!!!
         private static readonly string ServiceName = "Archive Service";
 
         public static WebApplication CreateWebApplication(string[] args)
@@ -34,13 +34,13 @@ namespace PaySmartly.Archive
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddGrpcClient<PersistanceClient>(options =>
-            {
-                // TODO: get from config
-                options.Address = new Uri("http://localhost:9087");
-            });
+            IConfigurationSection grpcClientsSection = builder.Configuration.GetSection("GrpcClients");
+            var grpcClients = grpcClientsSection.Get<GrpcClients>();
 
+            IEnvProvider envProvider = new EnvProvider(grpcClients);
+            string? persistanceUrl = envProvider?.GetPersistanceClientUrl();
 
+            builder.Services.AddGrpcClient<PersistanceClient>(options => options.Address = new Uri(persistanceUrl!));
             builder.Services.AddScoped<IPersistance, Persistance.Persistance>();
         }
 
@@ -64,6 +64,7 @@ namespace PaySmartly.Archive
             {
                 tracing.AddAspNetCoreInstrumentation().AddConsoleExporter();
             });
+            
             openTelemetryBuilder = openTelemetryBuilder.WithMetrics(metrics =>
             {
                 metrics.AddAspNetCoreInstrumentation().AddConsoleExporter();
