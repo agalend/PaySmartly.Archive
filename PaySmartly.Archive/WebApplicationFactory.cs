@@ -37,8 +37,8 @@ namespace PaySmartly.Archive
             IConfigurationSection grpcClientsSection = builder.Configuration.GetSection("GrpcClients");
             var grpcClients = grpcClientsSection.Get<GrpcClients>();
 
-            IEnvProvider envProvider = new EnvProvider(grpcClients);
-            string? persistanceUrl = envProvider?.GetPersistanceClientUrl();
+            EnvProvider envProvider = new(grpcClients);
+            string? persistanceUrl = envProvider?.GetPersistanceUrl();
 
             builder.Services.AddGrpcClient<PersistanceClient>(options => options.Address = new Uri(persistanceUrl!));
             builder.Services.AddScoped<IPersistance, Persistance.Persistance>();
@@ -64,7 +64,7 @@ namespace PaySmartly.Archive
             {
                 tracing.AddAspNetCoreInstrumentation().AddConsoleExporter();
             });
-            
+
             openTelemetryBuilder = openTelemetryBuilder.WithMetrics(metrics =>
             {
                 metrics.AddAspNetCoreInstrumentation().AddConsoleExporter();

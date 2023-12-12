@@ -9,12 +9,6 @@ using System.Net;
 
 namespace PaySmartly.Archive
 {
-    // TODO: add proper configuration
-    // TODO: add docker (publish the image to docker hub)
-    // TODO: write more unit tests
-    // TODO: add integration tests
-    // TODO: add github actions
-    // TODO: add distributed logging
     public class ApiFacade(WebApplication app)
     {
         private readonly WebApplication app = app;

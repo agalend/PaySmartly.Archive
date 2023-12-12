@@ -2,7 +2,7 @@ namespace PaySmartly.Archive.Env
 {
     public interface IEnvProvider
     {
-        string? GetPersistanceClientUrl();
+        string? GetPersistanceUrl();
     }
 
     public class EnvProvider(GrpcClients? grpcClients) : IEnvProvider
@@ -11,7 +11,7 @@ namespace PaySmartly.Archive.Env
 
         private readonly string? defaultPersistenceUrl = grpcClients?.Persistence?.Url;
 
-        public string? GetPersistanceClientUrl()
+        public string? GetPersistanceUrl()
         {
             string? url = Environment.GetEnvironmentVariable(PERSISTENCE_URL);
             url ??= defaultPersistenceUrl;
